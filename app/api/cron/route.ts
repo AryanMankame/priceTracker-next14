@@ -2,13 +2,13 @@ import { fetchAllProducts, fetchHighestLowestAveragePrice, fetchUsersUsingProduc
 import { generateEmailBody, sendEmail } from "@/lib/nodemailer";
 import { scrapeAmazonProduct } from "@/lib/scrapper";
 import { emailNotificationType } from "@/lib/scrapper/utils";
-
+import { NextResponse } from "next/server";
 export async function GET(){
     const THRESHOLD_RATE : Number = 40;
     try{
         const allProducts = await fetchAllProducts();
         if(allProducts){
-            Promise.all(
+            const updatedProducts = await Promise.all(
                 allProducts.map(async (product) => {
                     const scrapedData = await scrapeAmazonProduct(product.url);
                     var priceHistory = await fetchHighestLowestAveragePrice(product.id,product.currentPrice);
@@ -29,6 +29,10 @@ export async function GET(){
                     }
                 })
             ) 
+            return NextResponse.json({
+                message: "Ok",
+                data: updatedProducts,
+              });
         }
     }
     catch(err){

@@ -24,7 +24,7 @@ export const storeProduct = async (productData : any) => {
         highestPrice,
         averagePrice
     } = productData;
-    console.log(productData)
+    // console.log(productData)
     try{
         const prodExist = await sql`SELECT COUNT(*) AS cnt FROM product WHERE id = ${id}`
         if(prodExist.rows[0].cnt === '0'){
@@ -78,7 +78,7 @@ export const storeUserTracked = async (email : string, id : string) => {
         const ifTracked = await sql`
             SELECT trackingstatus FROM usertracked WHERE product_id = ${id} AND email = ${email};
         `
-        console.log(ifTracked)
+        // console.log(ifTracked)
         if(ifTracked.rowCount === 0){
             await sql` INSERT INTO usertracked VALUES (${email}, ${id}  , true); `;
             return 'successfully done';
