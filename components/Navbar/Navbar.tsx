@@ -1,11 +1,15 @@
-import { UserButton, auth } from "@clerk/nextjs"
+"use client"
+import { UserButton} from "@clerk/nextjs"
+import { useRouter } from "next/navigation";
 
-const Navbar = () => {
-  const { userId } = auth();
+const Navbar = ({ userId } : any) => {
   console.log(userId);
+  const router = useRouter();
   return (
     <div className="w-screen h-[8vh] flex justify-between items-center px-6 pr-14 md:px-16">
-        <div className="flex text-xl font-bold">
+        <div className="flex text-xl font-bold hover:cursor-pointer" onClick={() => {
+          router.push('/');
+        }}>
             <img src="https://pricewise-jsm.vercel.app/assets/icons/logo.svg" alt="" />
             Price <span className="text-red-600">Wise</span>
         </div>
