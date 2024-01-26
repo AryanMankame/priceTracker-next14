@@ -70,19 +70,17 @@ export const generateEmailBody = async (product : productInfoforEmail, type : st
 }
 
 const transporter = nodemailer.createTransport({
-    pool: true,
-    service: 'hotmail',
-    port: 2525,
+    host: 'smtp.ethereal.email',
+    port: 587,
     auth: {
-      user: 'aryanmproject@outlook.com',
-      pass: process.env.OUTLOOK_PASSWORD,
-    },
-    maxConnections: 1
+        user: 'toby.marks30@ethereal.email',
+        pass: 'xwDWrcxdc4w2GwxYxm'
+    }
   })
   
 export const sendEmail = async (emailContent: EmailContent, sendTo: string[]) => {
 const mailOptions = {
-    from: 'aryanmproject@outlook.com',
+    from: 'toby.marks30@ethereal.email',
     to: sendTo,
     html: emailContent.body,
     subject: emailContent.subject,

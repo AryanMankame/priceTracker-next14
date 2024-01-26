@@ -10,12 +10,15 @@ export async function GET(){
         if(allProducts){
             const updatedProducts = await Promise.all(
                 allProducts.map(async (product) => {
+                    // console.log(product.id)
                     const scrapedData = await scrapeAmazonProduct(product.url);
-                    var priceHistory = await fetchHighestLowestAveragePrice(product.id,product.currentPrice);
+                    var priceHistory = await fetchHighestLowestAveragePrice(product.id,Number(scrapedData.currentPrice));
                     const prodData = {
+                        id : product.id,
                         ...scrapedData,
                         ...priceHistory,
                     }
+                    // console.log(prodData);
                     const updateStatus = await updateProduct(prodData);
                     const emailNotifType = await emailNotificationType(product,prodData);
                     if(emailNotifType && updateStatus?.rowCount > 0){
@@ -25,14 +28,19 @@ export async function GET(){
                         }
                         const emailBody = await generateEmailBody(prodInfo, emailNotifType);
                         const usersTrackingProduct = await fetchUsersUsingProductId(product.id);
+                        // console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
+                        if(usersTrackingProduct && usersTrackingProduct.length > 0)
                         await sendEmail(emailBody, usersTrackingProduct)
                     }
+                    // console.log(updateStatus,emailNotifType)
+                    return prodData
                 })
             ) 
+            // console.log("allproductsafter update => ",updatedProducts)
             return NextResponse.json({
                 message: "Ok",
                 data: updatedProducts,
-              });
+            });
         }
     }
     catch(err){

@@ -35,18 +35,18 @@ export default async function SimilarProducts({ data } : any) {
   //     price: '₹295.00'
   //   }
   // ];
-  console.log(similarProducts)
+  // console.log(similarProducts)
   return (
     <div className="w-screen">
         <h1 className = "px-28 text-2xl font-bold">Similar Products</h1>
         <div className="flex flex-wrap pt-10 w-screen px-20 h-auto gap-5">
             {
-                similarProducts.map((item : any) => {
+                similarProducts.map((item : any,it) => {
                     if(item.img === undefined || item.title === undefined || item.price === undefined || item.url === undefined) {
-                      return <div key = {item}></div>
+                      return <div key = {it}></div>
                     }
                     return (
-                        <ProductInfo key = {item} item = {item} baseurl = {data.rows[0].url} category = {data.rows[0].category} />
+                        <ProductInfo key = {it} item = {item} baseurl = {data.rows[0].url} category = {data.rows[0].category} />
                     )
                 })
             }

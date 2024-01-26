@@ -1,5 +1,6 @@
 const numberHelperFunction = (elements : Array<any>) : Number => {
     var res : string = '';
+    // console.log(elements);
     elements.forEach(ele => {
         var trimmedData = ele.text().trim();
         if(trimmedData){

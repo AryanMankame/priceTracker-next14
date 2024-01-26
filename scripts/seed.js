@@ -6,17 +6,17 @@ async function createProductTable(){
     currency  varchar(5) NOT NULL,
     image varchar(10000),
     title varchar(10000) NOT NULL,
-    currentPrice INT NOT NULL,
-    originalPrice INT NOT NULL,
-    discountRate INT DEFAULT 0,
+    currentPrice FLOAT NOT NULL,
+    originalPrice FLOAT NOT NULL,
+    discountRate FLOAT DEFAULT 0.0,
     category varchar(10000),
-    reviewsCount INT DEFAULT 0,
+    reviewsCount FLOAT DEFAULT 0.0,
     stars FLOAT DEFAULT 0.0,
     isOutofStock BOOLEAN,
     description varchar(20000),
-    lowestPrice INT,
-    highestPrice INT,
-    averagePrice INT
+    lowestPrice FLOAT,
+    highestPrice FLOAT,
+    averagePrice FLOAT
     );
     `
 }
@@ -34,7 +34,7 @@ async function createPriceHistoryTable(){
     await sql`CREATE TABLE IF NOT EXISTS PriceHistory (
         product_id varchar(1000) REFERENCES Product(id) NOT NULL,
         datetime TIMESTAMP NOT NULL,
-        price INT
+        price FLOAT
         ) 
     `
 }

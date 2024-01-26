@@ -1,3 +1,4 @@
+"use server";
 import axios from 'axios'
 import * as cheerio from 'cheerio';
 import { extractCategory, extractCurrency, extractDiscountRate, extractImage, extractPrice, extractReviewCount, extractStars, extractTitle , extractisOutOfStock, extractDescription, extractSimilarProducts } from './utils';
@@ -47,32 +48,33 @@ export const scrapeAmazonProduct = async (url : string) : Promise<scrapedData> =
     const title = extractTitle([
         $('#productTitle')
     ]);
-    const currentPrice = extractPrice([
+    const currentPrice = Math.max(Number(extractPrice([
       $('.priceToPay span.a-price-whole'),
       $('.a.size.base.a-color-price'),
       $('.a-button-selected .a-color-base'),
-    ])
-    const originalPrice = extractPrice([
+      $('td.a-span12 span.a-price.a-text-price.a-size-medium.apexPriceToPay a.off-screen')
+    ])),0.0);
+    const originalPrice = Math.max(Number(extractPrice([
         $('.basisPrice span.a-price.a-text-price span.a-offscreen'),
-    ]);
-    const discountRate = extractDiscountRate([
+    ])),0.0);
+    const discountRate = Math.max(Number(extractDiscountRate([
         $('.savingsPercentage')
-    ]);
+    ])),0.0);
     const category = extractCategory([
         $('.nav-categ-image')
     ])
-    const reviewsCount = extractReviewCount([
+    const reviewsCount = Math.max(Number(extractReviewCount([
         $('#cm_cr_dp_d_rating_histogram').find('.averageStarRatingNumerical').find('span')
-    ])
-    const stars = extractStars([
+    ])),0.0);
+    const stars = Math.max(Number(extractStars([
         $('#acrPopover').find('span.a-declarative').find('a.a-popover-trigger').find('span.a-size-base')
-    ])
+    ])),0.0);
     
     const isOutOfStock = extractisOutOfStock([
         $('#availability').find('span.a-size-medium.a-color-success')
     ])
     const description = extractDescription($)
-    
+    // console.log(currentPrice)
     return {
         url,
         currency,

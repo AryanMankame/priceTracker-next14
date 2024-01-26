@@ -41,7 +41,7 @@ export default async function Trending() {
         <div className="flex flex-wrap pt-10 w-screen px-28 h-auto gap-10">
             {
                 trendingProducts?.rows.map((item : any) => {
-                    console.log('item ===> ',item)
+                    // console.log('item ===> ',item)
                     if(item.image === '' || item.title === '' || item.currentprice === -1 || item.url === '' || item.currency === null) {
                       return <div key = {item}></div>
                     }

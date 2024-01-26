@@ -1,6 +1,6 @@
 'use server'
 
-import { storeProduct, storeUserTracked } from "../db";
+import { addPriceHistory, storeProduct, storeUserTracked } from "../db";
 import { generateEmailBody, sendEmail } from "../nodemailer";
 import { scrapeAmazonProduct } from "../scrapper";
 
@@ -10,8 +10,11 @@ export const scrapeProductAndStore = async (url : string) => {
         // configuring the bright data host and port to be the ones making the axios request to amazon so that amazon doesnt block our scrapper.
         // Normally when we dont pass options to the axios the host and port are the localhost of the machine.
         const scrapedProductData = await scrapeAmazonProduct(url);
+        console.log(scrapedProductData)
         if(scrapedProductData){
-            return await storeProduct(scrapedProductData);
+            const prodId =  await storeProduct(scrapedProductData);
+            await addPriceHistory(Number(scrapedProductData.currentPrice),prodId);
+            return prodId;
         }
     } catch(err){
         throw new Error(`Error detected here : ${err}`);

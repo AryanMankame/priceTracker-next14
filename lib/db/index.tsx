@@ -74,6 +74,7 @@ export const fetchTrendingProducts = async () => {
     return data;
 }
 export const storeUserTracked = async (email : string, id : string) => {
+    noStore();
     try{
         const ifTracked = await sql`
             SELECT trackingstatus FROM usertracked WHERE product_id = ${id} AND email = ${email};
@@ -98,18 +99,22 @@ export const storeUserTracked = async (email : string, id : string) => {
 }
 
 export const fetchAllProducts = async () => {
+    noStore();
     const data = await sql`SELECT * FROM product`
     return data.rows
 }
 
 export const fetchHighestLowestAveragePrice = async (id : string, currentPrice : number) => {
+    noStore();
     const productPrices = await sql`SELECT * FROM pricehistory WHERE product_id = ${id}`
     var highestPrice = currentPrice; var lowestPrice = currentPrice; var priceSum = currentPrice;
     productPrices.rows.forEach((item) => {
         highestPrice = Math.max(highestPrice, item.price); lowestPrice = Math.min(lowestPrice, item.price);
         priceSum += item.price;
     });
-    var averagePrice = priceSum / productPrices.rowCount;
+    var averagePrice = productPrices.rowCount > 0 ? priceSum / productPrices.rowCount : priceSum;
+    averagePrice = Number(averagePrice.toFixed(0));
+    // console.log(id,"=>",priceSum,"=>",productPrices);
     return {
         lowestPrice,
         highestPrice,
@@ -119,7 +124,9 @@ export const fetchHighestLowestAveragePrice = async (id : string, currentPrice :
 }
 
 export const updateProduct = async (prodData : any) => {
+    noStore();
     const { id, currentPrice, lowestPrice, highestPrice, averagePrice } = prodData;
+    // console.log(id,currentPrice,lowestPrice,highestPrice,averagePrice,prodData);
     try{
         return await sql`
             UPDATE product SET currentprice = ${currentPrice}, lowestprice = ${lowestPrice}, highestprice = ${highestPrice}, averageprice = ${averagePrice} 
@@ -132,9 +139,17 @@ export const updateProduct = async (prodData : any) => {
 }
 
 export const fetchUsersUsingProductId = async (id : string) => {
+    noStore();
     const data = await sql`
-        SELECT email FROM usertracked WHERE product_id = ${id};
+        SELECT * FROM usertracked WHERE product_id = ${id};
     `
     const userEmail = data.rows.map(item => item.email);
+    console.log(id,"=>",userEmail)
     return userEmail;
+}
+
+export const addPriceHistory = async (currentPrice : number, id : string) => {
+    return await sql`
+        INSERT INTO pricehistory values ( ${id} , NOW() , ${currentPrice} );
+    `
 }
