@@ -11,6 +11,7 @@ const executeOnYourOwn = async () => {
     console.log('execute on your own function has started running...');
     try{
         const allProducts = await fetchAllProducts();
+        console.log('all the products have been fetched ', allProducts);
         if(allProducts){
             const updatedProducts = await Promise.all(
                 allProducts.map(async (product) => {
@@ -32,7 +33,7 @@ const executeOnYourOwn = async () => {
                         }
                         const emailBody = await generateEmailBody(prodInfo, emailNotifType);
                         const usersTrackingProduct = await fetchUsersUsingProductId(product.id);
-                        // console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
+                        console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
                         if(usersTrackingProduct && usersTrackingProduct.length > 0)
                         await sendEmail(emailBody, usersTrackingProduct)
                     }
@@ -40,7 +41,7 @@ const executeOnYourOwn = async () => {
                     return prodData
                 })
             ) 
-            // console.log("allproductsafter update => ",updatedProducts)
+            console.log("allproductsafter update => ",updatedProducts)
         }
     }
     catch(err){
