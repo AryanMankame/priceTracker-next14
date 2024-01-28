@@ -2,9 +2,10 @@
 'use server';
 import { sql } from '@vercel/postgres';
 import { currentUser } from '@clerk/nextjs';
-import { unstable_noStore as noStore } from 'next/cache';
+import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
 import { Md5 } from 'ts-md5';
 export const storeProduct = async (productData : any) => {
+    noStore();
     productData = { 'id' : Md5.hashStr(productData.url) , ...productData};
     const {
         id,
@@ -26,8 +27,9 @@ export const storeProduct = async (productData : any) => {
     } = productData;
     // console.log(productData)
     try{
-        const prodExist = await sql`SELECT COUNT(*) AS cnt FROM product WHERE id = ${id}`
-        if(prodExist.rows[0].cnt === '0'){
+        const prodExist = await sql`SELECT id FROM product WHERE id = ${id}`
+        console.log(prodExist,id)
+        if(prodExist.rowCount === 0){
             try{
                 await sql`BEGIN;`
                 await sql`
@@ -44,7 +46,7 @@ export const storeProduct = async (productData : any) => {
         }
         else{
             try{
-                await sql`UPDATE trending SET votes = votes + 1 WHERE product_id = ${id}`
+                console.log(await sql`UPDATE trending SET votes = votes+1 WHERE product_id = ${id}`)
             }
             catch(err){
                 console.log(`Cant update the vote count`)
@@ -67,9 +69,9 @@ export const fetchProductById = async (id : string) => {
 export const fetchTrendingProducts = async () => {
     noStore();
     const data = await sql`
-        SELECT id, url, currency, image, title, currentPrice, category FROM product WHERE id IN (
-            SELECT product_id FROM trending ORDER BY votes 
-        );
+        SELECT product.id, url, currency, image, title, currentPrice, category FROM 
+        product JOIN trending ON 
+        product.id = trending.product_id ORDER BY votes DESC;
     `
     return data;
 }
@@ -138,13 +140,15 @@ export const updateProduct = async (prodData : any) => {
     }
 }
 
-export const fetchUsersUsingProductId = async (id : string) => {
+export const fetchUsersUsingProductId = async (id : string)  => {
     noStore();
     const data = await sql`
         SELECT * FROM usertracked WHERE product_id = ${id};
     `
-    const userEmail = data.rows.map(item => item.email);
-    console.log(id,"=>",userEmail)
+    var userEmail : string[] = [];
+    data.rows.forEach(item => {
+        if(item.trackingstatus) userEmail.push(item.email)
+    });
     return userEmail;
 }
 
@@ -152,4 +156,28 @@ export const addPriceHistory = async (currentPrice : number, id : string) => {
     return await sql`
         INSERT INTO pricehistory values ( ${id} , NOW() , ${currentPrice} );
     `
+}
+
+export const fetchTrackedProductsforEmail = async (email : string) => {
+    return await sql`
+        SELECT product.*, usertracked.trackingstatus
+        FROM product
+        JOIN usertracked ON product.id = usertracked.product_id
+        WHERE usertracked.email = ${email};
+        `
+}
+
+export const updateTrackingStatus = async (email : string, product_id : string, tracking_status : boolean) => {
+    console.log(product_id,email,tracking_status)
+    await sql`
+        UPDATE usertracked SET trackingstatus = ${tracking_status} WHERE email = ${email} AND product_id = ${product_id}
+    `
+    revalidatePath('/cart');
+}
+
+export const deletProductFromUserTracked = async (email : string, product_id : string) => {
+    await sql`
+        DELETE FROM usertracked WHERE email = ${email} AND product_id = ${product_id}
+    `
+    revalidatePath('/cart');
 }

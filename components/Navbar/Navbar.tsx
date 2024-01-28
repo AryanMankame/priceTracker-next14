@@ -1,5 +1,5 @@
 "use client"
-import { UserButton} from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
 import { useRouter } from "next/navigation";
 
 const Navbar = ({ userId } : any) => {
