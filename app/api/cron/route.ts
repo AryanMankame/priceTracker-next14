@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export const maxDuration = 300; // This function can run for a maximum of 300 seconds
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-export async function GET(){
+const executeOnYourOwn = async () => {
     const THRESHOLD_RATE : Number = 40;
     try{
         const allProducts = await fetchAllProducts();
@@ -40,13 +40,15 @@ export async function GET(){
                 })
             ) 
             // console.log("allproductsafter update => ",updatedProducts)
-            return NextResponse.json({
-                message: "Ok",
-                data: updatedProducts,
-            });
         }
     }
     catch(err){
         throw Error(`error occurred ${err}`)
     }
+}
+export async function GET(){
+    executeOnYourOwn();
+    return NextResponse.json({
+        message: "Ok"
+    });
 }

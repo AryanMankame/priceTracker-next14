@@ -8,7 +8,6 @@ import { setUserTrackedAndSendWelcomeEmail } from '@/lib/actions'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchHighestLowestAveragePrice, fetchUsersUsingProductId, storeUserTracked } from '@/lib/db'
-import { helperFunction } from '@/lib/helper'
 export default function Modal({ productInfo } : any) {
   let [isOpen, setIsOpen] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,17 +136,16 @@ export default function Modal({ productInfo } : any) {
                             className="px-5 py-3 text-white text-base font-semibold border border-secondary bg-[#282828] rounded-lg mt-8"
                             onClick={async (e) => {
                                 e.preventDefault();
-                                // try{
-                                //     const msg = await setUserTrackedAndSendWelcomeEmail(email , productInfo.title, productInfo.image, productInfo.id);
-                                //     console.log(msg);
-                                //     if(msg === 'Product is already being tracked') notifyFailure(msg);
-                                //     else notifySuccess(msg);
-                                //     await storeUserTracked(email, productInfo.id);
-                                // }
-                                // catch(err){
-                                //     notifyFailure('Something went wrong.');
-                                // }
-                                helperFunction();
+                                try{
+                                    const msg = await setUserTrackedAndSendWelcomeEmail(email , productInfo.title, productInfo.image, productInfo.id);
+                                    console.log(msg);
+                                    if(msg === 'Product is already being tracked') notifyFailure(msg);
+                                    else notifySuccess(msg);
+                                    await storeUserTracked(email, productInfo.id);
+                                }
+                                catch(err){
+                                    notifyFailure('Something went wrong.');
+                                }
                             }}
                         >
                             {isSubmitting ? 'Submitting...' : 'Track'}
