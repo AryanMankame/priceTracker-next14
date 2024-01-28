@@ -48,6 +48,7 @@ const executeOnYourOwn = async () => {
     await new Promise((resolve,reject) => {
         setTimeout(() => {
             console.log("ran successfully")
+            resolve('sucess');
         },3000);
     } )
 }
