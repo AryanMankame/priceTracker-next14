@@ -53,7 +53,7 @@ export default async function page() {
                           return <div key = {it}></div>
                         }
                         return (
-                          <div>
+                          <div key = {it}>
                               <ProductInfo key = {it} item = {item} baseurl = {item.url} category = {item.category}/>
                               <Button email = {userEmail} product_id = {item.id} tracking_status = {true} />
                           </div>

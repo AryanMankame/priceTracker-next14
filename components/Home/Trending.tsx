@@ -40,13 +40,13 @@ export default async function Trending() {
         <h1 className = "px-28 text-2xl font-bold">Trending Products</h1>
         <div className="flex flex-wrap pt-10 w-screen px-28 h-auto gap-10">
             {
-                trendingProducts?.rows.map((item : any) => {
+                trendingProducts?.rows.map((item : any,it) => {
                     // console.log('item ===> ',item)
                     if(item.image === '' || item.title === '' || item.currentprice === -1 || item.url === '' || item.currency === null) {
-                      return <div key = {item}></div>
+                      return <div key = {it}></div>
                     }
                     return (
-                        <ProductInfo key = {item} item = {item} baseurl = {item.url} category = {item.category}/>
+                        <ProductInfo key = {it} item = {item} baseurl = {item.url} category = {item.category}/>
                     )
                 })
             }
