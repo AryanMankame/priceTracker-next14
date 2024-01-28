@@ -1,6 +1,7 @@
 import SimilarProducts from "../Products/SimilarProducts"
 import CarouselComponent from "./CarouselComponent"
 import SearchBar from "./SearchBar"
+import SearchModal from "./SearchModal"
 import Trending from "./Trending"
 
 const Hero = ({authInfo} : any) => {
