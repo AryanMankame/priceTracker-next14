@@ -1,7 +1,7 @@
 import { executeOnYourOwn } from "@/lib/helper"
 
 async function page() {
-  const execute = await executeOnYourOwn();
+  const execute = executeOnYourOwn();
   return (
     <div>page</div>
   )
