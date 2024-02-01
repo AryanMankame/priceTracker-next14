@@ -51,17 +51,8 @@ const executeOnYourOwn = async () => {
 }
 
 export async function GET() {
-    // const encoder = new TextEncoder();
-    // const customReadable = new ReadableStream({
-    //   async start(controller) {
-    //     // Start encoding 'Basic Streaming Test',
-    //     // and add the resulting stream to the queue
-    //     await executeOnYourOwn();
-    //     controller.close();
-    //   },
-    // });
-   
-    // return new Response(customReadable, {
-    //   headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    // });
+    await executeOnYourOwn();
+    return NextResponse.json({
+        message: "Ok"
+    });
 }
