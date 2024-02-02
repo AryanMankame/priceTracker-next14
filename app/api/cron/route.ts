@@ -6,9 +6,8 @@ import { NextResponse } from "next/server";
 export const maxDuration = 300; // This function can run for a maximum of 300 seconds
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-export default async function handler(req, res) {
-    const THRESHOLD_RATE = 40;
+export async function GET(){
+    const THRESHOLD_RATE : Number = 40;
     try{
         const allProducts = await fetchAllProducts();
         if(allProducts){
@@ -50,6 +49,4 @@ export default async function handler(req, res) {
     catch(err){
         throw Error(`error occurred ${err}`)
     }
-    res.status(200).end('Hello Cron!');
 }
-  
