@@ -100,3 +100,30 @@ export const scrapesimilarProducts = async (url : string) => {
     const similarProducts = extractSimilarProducts($);
     return similarProducts;
 }
+
+export const getCronData = async (url : string) => {
+    const options = initialiseAPI();
+    const response = await axios.get(url,options).then(data => data); 
+    const $ = cheerio.load(response.data);
+    const currentPrice = Math.max(Number(extractPrice([
+        $('.priceToPay span.a-price-whole'),
+        $('.a.size.base.a-color-price'),
+        $('.a-button-selected .a-color-base'),
+        $('td.a-span12 span.a-price.a-text-price.a-size-medium.apexPriceToPay a.off-screen')
+      ])),0.0);
+      const originalPrice = Math.max(Number(extractPrice([
+          $('.basisPrice span.a-price.a-text-price span.a-offscreen'),
+      ])),0.0);
+      const discountRate = Math.max(Number(extractDiscountRate([
+          $('.savingsPercentage')
+      ])),0.0);
+      const isOutOfStock = extractisOutOfStock([
+        $('#availability').find('span.a-size-medium.a-color-success')
+    ])
+    return {
+        currentPrice,
+        originalPrice,
+        discountRate,
+        isOutOfStock
+    }
+}

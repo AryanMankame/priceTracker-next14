@@ -14,8 +14,12 @@ const Navbar = ({ userId } : any) => {
             Price <span className="text-red-600">Wise</span>
         </div>
         <div className="flex w-[10%] justify-around">
-            <img className = "w-8 h-8" src="https://cdn-icons-png.flaticon.com/128/954/954591.png" alt="search-icon" />
-            <img className = "w-8 h-8" src="https://cdn-icons-png.flaticon.com/128/2331/2331970.png" alt="cart-icon" />
+            <img className = "w-8 h-8 hover:cursor-pointer" src="https://cdn-icons-png.flaticon.com/128/954/954591.png" alt="search-icon" onClick={() => {
+              router.push('/search')
+            }}/>
+            <img className = "w-8 h-8 hover:cursor-pointer" src="https://cdn-icons-png.flaticon.com/128/2331/2331970.png" alt="cart-icon" onClick={() => {
+              router.push('/cart');
+            }}/>
             { userId && 
                 <UserButton />
             }

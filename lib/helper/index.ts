@@ -1,7 +1,7 @@
 import { unstable_noStore } from "next/cache";
 import { fetchAllProducts, fetchHighestLowestAveragePrice, fetchUsersUsingProductId, updateProduct } from "../db";
 import { generateEmailBody, sendEmail } from "../nodemailer";
-import { scrapeAmazonProduct } from "../scrapper";
+import { getCronData, scrapeAmazonProduct } from "../scrapper";
 import { emailNotificationType } from "../scrapper/utils";
 
 export const getDomainFromUrl = (url : string) => {
@@ -35,9 +35,10 @@ export const searchProductsAlgo = (query : string,  productList : any[]) => {
 export const executeOnYourOwn = async () => {
   const THRESHOLD_RATE : Number = 40;
   console.log('execute on your own function has started running...');
+  const start = Date.now();
   try{
       const allProducts = await fetchAllProducts();
-      console.log('all the products have been fetched ', allProducts);
+      // console.log('all the products have been fetched ', allProducts);
       if(allProducts){
           const updatedProducts = await Promise.all(
               allProducts.map(async (product) => {
@@ -45,20 +46,21 @@ export const executeOnYourOwn = async () => {
                   const scrapedData = await scrapeAmazonProduct(product.url);
                   var priceHistory = await fetchHighestLowestAveragePrice(product.id,Number(scrapedData.currentPrice));
                   const prodData = {
-                      id : product.id,
+                      ...product,
                       ...scrapedData,
                       ...priceHistory,
                   }
-                  // console.log(prodData);
+                  console.log(prodData);
                   const updateStatus = await updateProduct(prodData);
                   const emailNotifType = await emailNotificationType(product,prodData);
                   if(emailNotifType && updateStatus?.rowCount > 0){
                       const prodInfo = {
-                          title : scrapedData.title,
-                          url : scrapedData.url
+                          title : prodData.title,
+                          url : prodData.url
                       }
                       const emailBody = await generateEmailBody(prodInfo, emailNotifType);
                       const usersTrackingProduct = await fetchUsersUsingProductId(product.id);
+                      const end1 = Date.now();
                       console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
                       if(usersTrackingProduct && usersTrackingProduct.length > 0)
                       await sendEmail(emailBody, usersTrackingProduct)
@@ -67,10 +69,12 @@ export const executeOnYourOwn = async () => {
                   return prodData
               })
           ) 
-          console.log("allproductsafter update => ",updatedProducts)
+          // console.log("allproductsafter update => ",updatedProducts)
       }
   }
   catch(err){
       throw Error(`error occurred ${err}`)
   }
+  const end = Date.now();
+  console.log("Time Taken to complete the function: ",end - start);
 }
