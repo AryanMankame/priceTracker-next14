@@ -31,7 +31,7 @@ export async function GET(){
                         }
                         const emailBody = await generateEmailBody(prodInfo, emailNotifType);
                         const usersTrackingProduct = await fetchUsersUsingProductId(product.id);
-                        // console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
+                        console.log("users => ",product.id," => ",usersTrackingProduct," => ",emailBody);
                         if(usersTrackingProduct && usersTrackingProduct.length > 0)
                         await sendEmail(emailBody, usersTrackingProduct)
                     }
