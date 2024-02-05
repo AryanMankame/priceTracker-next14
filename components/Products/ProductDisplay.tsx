@@ -12,7 +12,7 @@ function ProductDisplay({ data } : any) {
             <div className="text-2xl font-bold mb-3">
                 {data.title}
             </div>
-            <Link className = "text-slate-400 text-lg" href = "www.google.com">Visit Product</Link>
+            <Link className = "text-slate-400 text-lg" href = {data.url}>Visit Product</Link>
             <div className = "flex gap-3 mt-3">
                 <span className = "bg-red-100 flex w-20 h-10 justify-center items-center rounded-lg gap-2">
                     <img className = "h-5" src="https://raw.githubusercontent.com/adrianhajdin/pricewise/94b72079a2f7928d194087df60e9fb1c04446636/public/assets/icons/red-heart.svg" alt="" />

@@ -102,7 +102,7 @@ export const extractSimilarProducts = ($ : any) => {
     return similar_products || [];
 }
 export const emailNotificationType = async (currentProductData : any, scrappedProductData : any) => {
-    const THRESHOLD_PERCENTAGE = 40;
+    const THRESHOLD_PERCENTAGE = 20;
     if(scrappedProductData.discountRate >= THRESHOLD_PERCENTAGE){
       return 'THRESHOLD_MET';
     }

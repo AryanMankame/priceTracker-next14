@@ -21,7 +21,7 @@ export async function GET(){
                         ...scrapedData,
                         ...priceHistory,
                     }
-                    // console.log(prodData);
+                    console.log(prodData);
                     const updateStatus = await updateProduct(prodData);
                     const emailNotifType = await emailNotificationType(product,prodData);
                     if(emailNotifType && updateStatus?.rowCount > 0){
